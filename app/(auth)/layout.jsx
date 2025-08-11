@@ -1,14 +1,10 @@
-import Header from "@/components/Header";
-import React from "react";
-import { SessionProvider } from "next-auth/react";
+import SessionHeader from "@/components/SessionHeader";
 
 const AuthLayout = ({ children }) => {
   return (
-    <div className="flex flex-col h-max  w-screen">
-      <SessionProvider>
-        <Header />
-        {children}
-      </SessionProvider>
+    <div className="flex flex-col h-max w-screen">
+      <SessionHeader />
+      {children}
     </div>
   );
 };
