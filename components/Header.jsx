@@ -4,19 +4,53 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "./ui/button";
-import { signIn } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 
 export default function Header() {
+  const { data: session, status } = useSession();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(status === "loading");
   const [error, setError] = useState("");
   const router = useRouter();
 
   const getDashboardLink = () => {
-    if (!user) return "/";
-    return user.role === "LAWYER" ? "/dashboard/lawyer" : "/dashboard/client";
+    if (!session?.user) return "/";
+    return session.user.role === "LAWYER"
+      ? "/dashboard/lawyer"
+      : "/dashboard/client";
   };
+
+  const handleSignIn = async () => {
+    setError(null);
+    setLoading(true);
+    try {
+      await router.push("/api/auth/signin");
+    } catch (err) {
+      console.error("Sign-in failed:", err);
+      setError("An unexpected error occurred");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSignOut = async () => {
+    setLoading(true);
+    try {
+      await signOut({ callbackUrl: "/" });
+    } catch (err) {
+      console.error("Sign-out failed:", err);
+      setError("An unexpected error occurred");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    setLoading(status === "loading");
+    if (session?.user) {
+      setError(""); // Clear error on successful session
+    }
+  }, [session, status]);
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
@@ -91,7 +125,7 @@ export default function Header() {
               </div>
             ) : error ? (
               <div className="text-red-600 text-sm">{error}</div>
-            ) : user ? (
+            ) : session?.user ? (
               <div className="flex items-center space-x-4">
                 <Link
                   href={getDashboardLink()}
@@ -103,22 +137,22 @@ export default function Header() {
                 <Link
                   href="/profile"
                   className="flex items-center space-x-2 text-gray-700 hover:text-navy-600 font-medium transition-colors"
-                  aria-label={`View profile for ${user.name}`}
+                  aria-label={`View profile for ${session.user.name}`}
                 >
-                  {user.profileImage ? (
+                  {session.user.profileImage ? (
                     <img
-                      src={user.profileImage}
-                      alt={`Profile image of ${user.name}`}
+                      src={session.user.profileImage}
+                      alt={`Profile image of ${session.user.name}`}
                       className="w-8 h-8 rounded-full object-cover"
                     />
                   ) : (
                     <div className="w-8 h-8 bg-navy-600 rounded-full flex items-center justify-center">
                       <span className="text-white text-sm font-medium">
-                        {user.name?.charAt(0)?.toUpperCase() || "U"}
+                        {session.user.name?.charAt(0)?.toUpperCase() || "U"}
                       </span>
                     </div>
                   )}
-                  <span>{user.name}</span>
+                  <span>{session.user.name}</span>
                 </Link>
                 <Button
                   type="button"
@@ -131,15 +165,10 @@ export default function Header() {
               </div>
             ) : (
               <div className="flex items-center space-x-4">
-                <Button variant="success" onClick={() => signIn("credentials")}>
-                  Default
-                </Button>
-                <Link href="/login" aria-label="Log in">
-                  <Button>Login</Button>
-                </Link>
+                <Button onClick={handleSignIn}>Sign In</Button>
                 <Link
                   href="/signup"
-                  className="px-4 py-2 bg-navy-600 rounded-lg hover:bg-navy-700 transition-colors font-medium"
+                  className="px-4 py-2 bg-navy-600 text-white rounded-lg hover:bg-navy-700 transition-colors font-medium"
                   aria-label="Sign up"
                 >
                   <Button variant="outline">Sign Up</Button>
@@ -234,7 +263,7 @@ export default function Header() {
                   <div className="text-red-600 text-sm text-center">
                     {error}
                   </div>
-                ) : user ? (
+                ) : session?.user ? (
                   <>
                     <Link
                       href={getDashboardLink()}
@@ -246,7 +275,7 @@ export default function Header() {
                     <Link
                       href="/profile"
                       className="px-4 py-2 text-center text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium"
-                      aria-label={`View profile for ${user.name}`}
+                      aria-label={`View profile for ${session.user.name}`}
                     >
                       Profile
                     </Link>
@@ -262,11 +291,11 @@ export default function Header() {
                 ) : (
                   <>
                     <Link
-                      href="/login"
+                      href="/api/auth/signin"
                       className="px-4 py-2 text-center text-navy-600 border border-navy-600 rounded-lg hover:bg-navy-50 transition-colors font-medium"
                       aria-label="Log in"
                     >
-                      Login
+                      Sign In
                     </Link>
                     <Link
                       href="/signup"

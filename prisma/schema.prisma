@@ -8,6 +8,7 @@ datasource db {
 }
 
 model User {
+<<<<<<< HEAD
     id       String  @id @default(uuid()) @map("_id")
     name     String?
     email    String? @unique
@@ -16,6 +17,16 @@ model User {
     // image         String?
     // accounts      Account[]
     // sessions      Session[]
+=======
+    id            String    @id @default(uuid()) @map("_id")
+    name          String?
+    email         String?   @unique
+    emailVerified DateTime?
+    image         String?
+    password      String? // Add this line for password storage
+    accounts      Account[]
+    sessions      Session[]
+>>>>>>> 578c072aa84aff88161830c5713e43b8fb01bc5e
 }
 
 model Account {
