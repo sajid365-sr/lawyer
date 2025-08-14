@@ -277,6 +277,8 @@ const AdminPanel = () => {
                               src={lawyer.image}
                               alt={lawyer.name}
                               className="w-12 h-12 rounded-full object-cover"
+                              width={48}
+                              height={48}
                             />
                             {index === 0 && (
                               <TrophyIcon className="w-4 h-4 text-yellow-500 absolute -top-1 -right-1" />
@@ -486,7 +488,7 @@ const AdminPanel = () => {
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            ${lawyer.earnings.toLocaleString()}
+                            ${lawyer.earnings}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <span

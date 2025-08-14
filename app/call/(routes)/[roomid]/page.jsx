@@ -14,19 +14,20 @@ export default function VideoCallPage() {
   // Mock current user and other participant
   const currentUser = {
     id: "user1",
-    name: "John Smith",
-    email: "john@example.com",
+    name: "Sajid Sorker",
+    email: "sajid.sorker@driplare.com",
     type: "client",
     avatar:
-      "https://ui-avatars.com/api/?name=John+Smith&size=200&background=4F46E5&color=ffffff",
+      "https://ui-avatars.com/api/?name=Sajid+Sorker&size=200&background=4F46E5&color=ffffff",
   };
 
   const otherParticipant = {
     id: "lawyer1",
-    name: "Sarah Johnson",
-    email: "sarah@example.com",
+    name: "Elon Musk",
+    email: "elon.musk@xai.com",
     type: "lawyer",
-    avatar: "user.png",
+    avatar:
+      "https://ui-avatars.com/api/?name=Elon+Musk&size=200&background=4F46E5&color=ffffff",
   };
 
   useEffect(() => {

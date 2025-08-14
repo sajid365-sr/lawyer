@@ -64,13 +64,6 @@ export default function Header() {
               Browse Lawyers
             </Link>
             <Link
-              href="/register-lawyer"
-              className="text-gray-700 hover:text-navy-600 font-medium transition-colors"
-              aria-label="Join as a lawyer"
-            >
-              Join as Lawyer
-            </Link>
-            <Link
               href="/faq"
               className="text-gray-700 hover:text-navy-600 font-medium transition-colors"
               aria-label="Frequently asked questions"
@@ -138,20 +131,18 @@ export default function Header() {
               </div>
             ) : (
               <div className="flex items-center space-x-4">
-                <Button onClick={() => signIn("credentials")}>Default</Button>
-                <Link
-                  href="/login"
-                  className="px-4 py-2 text-navy-600 border border-navy-600 rounded-lg hover:bg-navy-50 transition-colors font-medium"
-                  aria-label="Log in"
-                >
-                  Login
+                <Button variant="success" onClick={() => signIn("credentials")}>
+                  Default
+                </Button>
+                <Link href="/login" aria-label="Log in">
+                  <Button>Login</Button>
                 </Link>
                 <Link
                   href="/signup"
                   className="px-4 py-2 bg-navy-600 rounded-lg hover:bg-navy-700 transition-colors font-medium"
                   aria-label="Sign up"
                 >
-                  Sign Up
+                  <Button variant="outline">Sign Up</Button>
                 </Link>
               </div>
             )}

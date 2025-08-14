@@ -38,7 +38,8 @@ export const adminData = {
       id: "lawyer1",
       name: "Sarah Johnson",
       title: "Family Law Attorney",
-      image: "user.png",
+      image:
+        "https://ui-avatars.com/api/?name=Sarah+Johnson&size=50&background=4F46E5&color=ffffff",
       rating: 4.9,
       reviewCount: 127,
       experience: 12,
@@ -786,7 +787,8 @@ export const dashboardData = {
       id: "lawyer1",
       name: "Sarah Johnson",
       title: "Family Law Attorney",
-      image: "user.png",
+      image:
+        "https://ui-avatars.com/api/?name=Sarah+Johnson&size=50&background=4F46E5&color=ffffff",
       rating: 4.9,
       reviewCount: 127,
       experience: 12,

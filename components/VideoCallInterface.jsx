@@ -110,6 +110,8 @@ export default function VideoCallInterface({
                   }
                   alt={otherParticipant.name}
                   className="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-white shadow-lg"
+                  width={128}
+                  height={128}
                 />
                 <p className="text-white text-xl font-medium">
                   {otherParticipant.name}
@@ -139,6 +141,8 @@ export default function VideoCallInterface({
                   }
                   alt={currentUser.name}
                   className="w-16 h-16 rounded-full border-2 border-white"
+                  width={64}
+                  height={64}
                 />
               </div>
             ) : (

@@ -74,7 +74,7 @@ export default function ClientDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="bg-white shadow-sm border-b flex justify-between">
+      <div className="bg-white shadow-sm border-b items-center flex justify-between">
         <div className="max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="py-6">
             <h1 className="text-3xl font-bold text-gray-900">
@@ -85,7 +85,16 @@ export default function ClientDashboard() {
             </p>
           </div>
         </div>
-        <Image src="/user.png" alt="" width={50} height={50} className="mr-6" />
+
+        <div>
+          <Image
+            src="https://ui-avatars.com/api/?name=John+Smith&size=50&background=4F46E5&color=ffffff"
+            alt=""
+            width={50}
+            height={50}
+            className="mr-6 rounded-full"
+          />
+        </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -414,6 +423,8 @@ export default function ClientDashboard() {
                                 src={lawyer.image}
                                 alt={lawyer.name}
                                 className="w-12 h-12 rounded-full object-cover"
+                                width={48}
+                                height={48}
                               />
                               <div>
                                 <h4 className="font-medium text-gray-900">

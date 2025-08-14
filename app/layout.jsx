@@ -1,5 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { auth } from "@/lib/auth/auth";
+import { redirect } from "next/navigation";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,6 +19,9 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+  const session = auth();
+  if (!session) redirect("/login");
+
   return (
     <html lang="en">
       <body
