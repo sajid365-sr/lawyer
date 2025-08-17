@@ -7,92 +7,22 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model Account {
-    id                String @id @default(auto()) @map("_id") @db.ObjectId
-    /// Field referred in an index, but found no data to define the type.
-    provider          Json?
-    /// Field referred in an index, but found no data to define the type.
-    providerAccountId Json?
-
-    @@unique([provider, providerAccountId])
+model Client {
+    id           String  @id @default(auto()) @map("_id") @db.ObjectId
+    name         String
+    email        String  @unique
+    profileImage String?
+    password     String
 }
 
-model Authenticator {
-    id     String  @id @default(auto()) @map("_id") @db.ObjectId
-    userId String?
-
-    @@unique([userId, id])
-}
-
-model Session {
-    id           String @id @default(auto()) @map("_id") @db.ObjectId
-    /// Field referred in an index, but found no data to define the type.
-    sessionToken Json?  @unique
-}
-
-model User {
-    /// Multiple data types found: String: 50%, String (ObjectId): 50% out of 2 sampled entries
-    id        Json      @id @map("_id")
-    createdAt DateTime? @db.Date
-    email     String    @unique
-    name      String
-    password  String
-    role      String?
-    updatedAt DateTime? @db.Date
-}
-
-model VerificationToken {
-    id         String @id @default(auto()) @map("_id") @db.ObjectId
-    /// Field referred in an index, but found no data to define the type.
-    identifier Json?
-    /// Field referred in an index, but found no data to define the type.
-    token      Json?  @unique
-
-    @@unique([identifier, token])
-}
-
-model bookings {
-    id String @id @default(auto()) @map("_id") @db.ObjectId
-}
-
-model client_profiles {
-    id     String @id @default(auto()) @map("_id") @db.ObjectId
-    /// Field referred in an index, but found no data to define the type.
-    userId Json?  @unique
-}
-
-model lawyer_practice_areas {
-    id             String @id @default(auto()) @map("_id") @db.ObjectId
-    /// Field referred in an index, but found no data to define the type.
-    lawyerId       Json?
-    /// Field referred in an index, but found no data to define the type.
-    practiceAreaId Json?
-
-    @@unique([lawyerId, practiceAreaId])
-}
-
-model lawyer_profiles {
-    id     String @id @default(auto()) @map("_id") @db.ObjectId
-    /// Field referred in an index, but found no data to define the type.
-    userId Json?  @unique
-}
-
-model messages {
-    id String @id @default(auto()) @map("_id") @db.ObjectId
-}
-
-model practice_areas {
-    id   String @id @default(auto()) @map("_id") @db.ObjectId
-    /// Field referred in an index, but found no data to define the type.
-    name Json?  @unique
-}
-
-model reviews {
-    id       String @id @default(auto()) @map("_id") @db.ObjectId
-    /// Field referred in an index, but found no data to define the type.
-    clientId Json?
-    /// Field referred in an index, but found no data to define the type.
-    lawyerId Json?
-
-    @@unique([clientId, lawyerId])
+model Lawyer {
+    id              String  @id @default(auto()) @map("_id") @db.ObjectId
+    name            String
+    email           String  @unique
+    password        String
+    experienceYears Float?  @map("experience_years")
+    legalArea       String? @map("legal_area")
+    location        String?
+    hourlyRate      Float?  @map("hourly_rate")
+    profileImage    String? @map("profile_image")
 }

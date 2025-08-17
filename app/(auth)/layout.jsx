@@ -1,9 +1,9 @@
-import SessionHeader from "@/components/SessionHeader";
+import Header from "@/components/Header";
 
 const AuthLayout = ({ children }) => {
   return (
     <div className="flex flex-col h-max w-screen">
-      <SessionHeader />
+      <Header />
       {children}
     </div>
   );

@@ -1,24 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "./ui/button";
-import { useSession, signOut } from "next-auth/react";
+import { signOut } from "next-auth/react";
 
 export default function Header() {
-  const { data: session, status } = useSession();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [loading, setLoading] = useState(status === "loading");
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const router = useRouter();
-
-  const getDashboardLink = () => {
-    if (!session?.user) return "/";
-    return session.user.role === "LAWYER"
-      ? "/dashboard/lawyer"
-      : "/dashboard/client";
-  };
 
   const handleSignIn = async () => {
     setError(null);
@@ -44,13 +36,6 @@ export default function Header() {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    setLoading(status === "loading");
-    if (session?.user) {
-      setError(""); // Clear error on successful session
-    }
-  }, [session, status]);
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
@@ -114,67 +99,22 @@ export default function Header() {
           </div>
 
           {/* Desktop Actions */}
-          <div className="hidden md:flex items-center space-x-4">
-            {loading ? (
-              <div
-                className="flex items-center space-x-2"
-                aria-label="Loading user status"
-              >
-                <div className="w-6 h-6 border-2 border-navy-600 border-t-transparent rounded-full animate-spin"></div>
-                <span className="text-gray-600">Loading...</span>
-              </div>
-            ) : error ? (
-              <div className="text-red-600 text-sm">{error}</div>
-            ) : session?.user ? (
-              <div className="flex items-center space-x-4">
-                <Link
-                  href={getDashboardLink()}
-                  className="text-gray-700 hover:text-navy-600 font-medium transition-colors"
-                  aria-label="Go to dashboard"
-                >
-                  Dashboard
-                </Link>
-                <Link
-                  href="/profile"
-                  className="flex items-center space-x-2 text-gray-700 hover:text-navy-600 font-medium transition-colors"
-                  aria-label={`View profile for ${session.user.name}`}
-                >
-                  {session.user.profileImage ? (
-                    <img
-                      src={session.user.profileImage}
-                      alt={`Profile image of ${session.user.name}`}
-                      className="w-8 h-8 rounded-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-8 h-8 bg-navy-600 rounded-full flex items-center justify-center">
-                      <span className="text-white text-sm font-medium">
-                        {session.user.name?.charAt(0)?.toUpperCase() || "U"}
-                      </span>
-                    </div>
-                  )}
-                  <span>{session.user.name}</span>
-                </Link>
-                <Button
-                  type="button"
-                  onClick={handleSignOut}
-                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
-                  aria-label="Log out"
-                >
-                  Logout
-                </Button>
-              </div>
-            ) : (
-              <div className="flex items-center space-x-4">
-                <Button onClick={handleSignIn}>Sign In</Button>
-                <Link
-                  href="/signup"
-                  className="px-4 py-2 bg-navy-600 text-white rounded-lg hover:bg-navy-700 transition-colors font-medium"
-                  aria-label="Sign up"
-                >
-                  <Button variant="outline">Sign Up</Button>
-                </Link>
-              </div>
-            )}
+
+          <div className="flex gap-2 items-center ">
+            <Link
+              href="/login"
+              className=" py-2 bg-navy-600  rounded-lg hover:bg-navy-700 transition-colors font-medium"
+              aria-label="Sign in"
+            >
+              <Button variant="outline">Login</Button>
+            </Link>
+            <Link
+              href="/signup"
+              className=" py-2 bg-navy-600  rounded-lg hover:bg-navy-700 transition-colors font-medium"
+              aria-label="Sign up"
+            >
+              <Button variant="outline">Sign Up</Button>
+            </Link>
           </div>
 
           {/* Mobile menu button */}
@@ -249,64 +189,6 @@ export default function Header() {
               >
                 Contact
               </Link>
-
-              <div className="flex flex-col space-y-2 pt-4 border-t border-gray-200">
-                {loading ? (
-                  <div
-                    className="flex items-center space-x-2 justify-center"
-                    aria-label="Loading user status"
-                  >
-                    <div className="w-6 h-6 border-2 border-navy-600 border-t-transparent rounded-full animate-spin"></div>
-                    <span className="text-gray-600">Loading...</span>
-                  </div>
-                ) : error ? (
-                  <div className="text-red-600 text-sm text-center">
-                    {error}
-                  </div>
-                ) : session?.user ? (
-                  <>
-                    <Link
-                      href={getDashboardLink()}
-                      className="px-4 py-2 text-center text-navy-600 border border-navy-600 rounded-lg hover:bg-navy-50 transition-colors font-medium"
-                      aria-label="Go to dashboard"
-                    >
-                      Dashboard
-                    </Link>
-                    <Link
-                      href="/profile"
-                      className="px-4 py-2 text-center text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium"
-                      aria-label={`View profile for ${session.user.name}`}
-                    >
-                      Profile
-                    </Link>
-                    <Button
-                      type="button"
-                      onClick={handleSignOut}
-                      className="px-4 py-2 text-center bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
-                      aria-label="Log out"
-                    >
-                      Logout
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Link
-                      href="/api/auth/signin"
-                      className="px-4 py-2 text-center text-navy-600 border border-navy-600 rounded-lg hover:bg-navy-50 transition-colors font-medium"
-                      aria-label="Log in"
-                    >
-                      Sign In
-                    </Link>
-                    <Link
-                      href="/signup"
-                      className="px-4 py-2 text-center bg-navy-600 text-white rounded-lg hover:bg-navy-700 transition-colors font-medium"
-                      aria-label="Sign up"
-                    >
-                      Sign Up
-                    </Link>
-                  </>
-                )}
-              </div>
             </div>
           </div>
         )}
