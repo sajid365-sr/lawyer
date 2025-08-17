@@ -7,60 +7,92 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model User {
-<<<<<<< HEAD
-    id       String  @id @default(uuid()) @map("_id")
-    name     String?
-    email    String? @unique
-    password String
-    // emailVerified DateTime?
-    // image         String?
-    // accounts      Account[]
-    // sessions      Session[]
-=======
-    id            String    @id @default(uuid()) @map("_id")
-    name          String?
-    email         String?   @unique
-    emailVerified DateTime?
-    image         String?
-    password      String? // Add this line for password storage
-    accounts      Account[]
-    sessions      Session[]
->>>>>>> 578c072aa84aff88161830c5713e43b8fb01bc5e
-}
-
 model Account {
-    id                String  @id @default(uuid()) @map("_id")
-    userId            String
-    type              String
-    provider          String
-    providerAccountId String
-    refresh_token     String?
-    access_token      String?
-    expires_at        Int?
-    token_type        String?
-    scope             String?
-    id_token          String?
-    session_state     String?
-
-    // user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    id                String @id @default(auto()) @map("_id") @db.ObjectId
+    /// Field referred in an index, but found no data to define the type.
+    provider          Json?
+    /// Field referred in an index, but found no data to define the type.
+    providerAccountId Json?
 
     @@unique([provider, providerAccountId])
 }
 
+model Authenticator {
+    id     String  @id @default(auto()) @map("_id") @db.ObjectId
+    userId String?
+
+    @@unique([userId, id])
+}
+
 model Session {
-    id           String   @id @default(uuid()) @map("_id")
-    sessionToken String   @unique
-    userId       String
-    expires      DateTime
-    // user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    id           String @id @default(auto()) @map("_id") @db.ObjectId
+    /// Field referred in an index, but found no data to define the type.
+    sessionToken Json?  @unique
+}
+
+model User {
+    /// Multiple data types found: String: 50%, String (ObjectId): 50% out of 2 sampled entries
+    id        Json      @id @map("_id")
+    createdAt DateTime? @db.Date
+    email     String    @unique
+    name      String
+    password  String
+    role      String?
+    updatedAt DateTime? @db.Date
 }
 
 model VerificationToken {
-    id         String   @id @default(uuid()) @map("_id")
-    identifier String
-    token      String   @unique
-    expires    DateTime
+    id         String @id @default(auto()) @map("_id") @db.ObjectId
+    /// Field referred in an index, but found no data to define the type.
+    identifier Json?
+    /// Field referred in an index, but found no data to define the type.
+    token      Json?  @unique
 
     @@unique([identifier, token])
+}
+
+model bookings {
+    id String @id @default(auto()) @map("_id") @db.ObjectId
+}
+
+model client_profiles {
+    id     String @id @default(auto()) @map("_id") @db.ObjectId
+    /// Field referred in an index, but found no data to define the type.
+    userId Json?  @unique
+}
+
+model lawyer_practice_areas {
+    id             String @id @default(auto()) @map("_id") @db.ObjectId
+    /// Field referred in an index, but found no data to define the type.
+    lawyerId       Json?
+    /// Field referred in an index, but found no data to define the type.
+    practiceAreaId Json?
+
+    @@unique([lawyerId, practiceAreaId])
+}
+
+model lawyer_profiles {
+    id     String @id @default(auto()) @map("_id") @db.ObjectId
+    /// Field referred in an index, but found no data to define the type.
+    userId Json?  @unique
+}
+
+model messages {
+    id String @id @default(auto()) @map("_id") @db.ObjectId
+}
+
+model practice_areas {
+    id   String @id @default(auto()) @map("_id") @db.ObjectId
+    /// Field referred in an index, but found no data to define the type.
+    name Json?  @unique
+}
+
+model reviews {
+    id       String @id @default(auto()) @map("_id") @db.ObjectId
+    /// Field referred in an index, but found no data to define the type.
+    clientId Json?
+    /// Field referred in an index, but found no data to define the type.
+    lawyerId Json?
+
+    @@unique([clientId, lawyerId])
 }
