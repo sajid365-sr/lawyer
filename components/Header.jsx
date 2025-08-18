@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Button } from "./ui/button";
 import { signOut, useSession } from "next-auth/react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -13,12 +12,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export default function Header() {
+export default function Header({ userImage, userRole }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const router = useRouter();
   const { data: session, status } = useSession();
-
-  console.log("Session data in Header:", session, "Status:", status);
 
   const handleSignOut = async () => {
     try {
@@ -29,16 +25,12 @@ export default function Header() {
   };
 
   const getDashboardLink = () => {
-    if (!session?.user?.role) return null;
-    return session.user.role === "lawyer"
-      ? "/dashboard/lawyer"
-      : "/dashboard/client";
+    if (!userRole) return null;
+    return userRole === "lawyer" ? "/dashboard/lawyer" : "/dashboard/client";
   };
   const getProfileLink = () => {
-    if (!session?.user?.role) return null;
-    return session.user.role === "lawyer"
-      ? "/profile/lawyer"
-      : "/profile/client";
+    if (!userRole) return null;
+    return userRole === "lawyer" ? "/profile/lawyer" : "/profile/client";
   };
 
   return (
@@ -109,7 +101,7 @@ export default function Header() {
                 <DropdownMenuTrigger asChild>
                   <Avatar className="h-10 w-10 cursor-pointer">
                     <AvatarImage
-                      src={session.user.image || "/placeholder-avatar.jpg"}
+                      src={userImage || "/user.jpg"}
                       alt={session.user.name || "User profile"}
                     />
                     <AvatarFallback>
@@ -122,7 +114,7 @@ export default function Header() {
                     <Link href={getDashboardLink() || "#"}>Dashboard</Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href={getProfileLink() || "#"}>profile</Link>
+                    <Link href={getProfileLink() || "#"}>Profile</Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={handleSignOut}>
                     Logout
@@ -230,7 +222,7 @@ export default function Header() {
                     >
                       <Avatar className="h-8 w-8 mr-2">
                         <AvatarImage
-                          src={session.user.image || "/placeholder-avatar.jpg"}
+                          src={userImage || "/user.jpg"}
                           alt={session.user.name || "User profile"}
                         />
                         <AvatarFallback>
@@ -263,7 +255,7 @@ export default function Header() {
                   </Link>
                   <Link
                     href="/signup"
-                    className="py-2 px-4 bg-navy-600  rounded-lg hover:bg-navy-700 transition-colors font-medium w-full text-center"
+                    className="py-2 px-4 bg-navy-600 rounded-lg hover:bg-navy-700 transition-colors font-medium w-full text-center"
                     aria-label="Sign up"
                   >
                     Sign Up

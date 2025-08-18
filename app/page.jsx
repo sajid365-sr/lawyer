@@ -1,5 +1,4 @@
 import React from "react";
-import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SearchBar from "@/components/SearchBar";
 import LawyerCard from "@/components/LawyerCard";
@@ -19,8 +18,6 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
-
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-blue-950 via-blue-800 to-blue-700 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
