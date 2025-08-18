@@ -7,7 +7,7 @@ import ToasterWrapper from "@/components/ToasterWrapper";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "Your App Name",
+  title: "Legal Connect",
   description: "A platform for clients and lawyers",
 };
 

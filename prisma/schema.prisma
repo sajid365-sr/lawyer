@@ -13,6 +13,7 @@ model Client {
     email        String  @unique
     profileImage String?
     password     String
+    mobileNumber String?
 }
 
 model Lawyer {

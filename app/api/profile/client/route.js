@@ -27,28 +27,30 @@ export async function GET(request) {
 
 export async function POST(request) {
   const session = await auth();
-  if (!session || session.user.role !== "client") {
+  if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const userId = session.user.id;
-
+  const data = await request.json();
   try {
-    const data = await request.json();
-    const updated = await prisma.client.update({
-      where: { id: userId },
+    const updatedProfile = await prisma.client.update({
+      where: { id: session.user.id },
       data: {
         name: data.name,
         email: data.email,
+        mobileNumber: data.mobileNumber,
         profileImage: data.profileImage,
       },
     });
-    return NextResponse.json(updated);
+    return NextResponse.json(
+      { message: "Profile updated", profile: updatedProfile },
+      { status: 200 }
+    );
   } catch (error) {
-    console.error("Update profile error:", error);
+    console.error("Profile update error:", error);
     return NextResponse.json(
       { error: "Failed to update profile" },
-      { status: 500 }
+      { status: 400 }
     );
   }
 }
