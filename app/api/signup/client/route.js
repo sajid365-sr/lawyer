@@ -1,59 +1,53 @@
-import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { z } from "zod";
+import prisma from "@/lib/prisma"; // Verify this path
 import bcrypt from "bcryptjs";
-import { clientSignupSchema } from "@/lib/validations/client";
+import { clientSignupSchema } from "@/lib/schema/client";
 
-export async function POST(request) {
+export async function POST(req) {
   try {
-    const body = await request.json();
-    const { name, email, password } = clientSignupSchema.parse(body);
+    const body = await req.json();
+    const data = clientSignupSchema.parse(body);
 
-    // Check if email already exists
+    console.log(
+      "=========================================",
+      Object.keys(prisma)
+    );
+
     const existingUser = await prisma.client.findUnique({
-      where: { email },
+      where: { email: data.email.toLowerCase() },
     });
-
     if (existingUser) {
       return NextResponse.json(
-        { error: "Email already exists" },
+        { error: "User with this email already exists" },
         { status: 400 }
       );
     }
 
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(data.password, 10);
 
-    // Create user
     const user = await prisma.client.create({
       data: {
-        name,
-        email,
+        name: data.name,
+        email: data.email.toLowerCase(),
         password: hashedPassword,
       },
     });
 
-    return NextResponse.json({ message: "User created successfully", user });
+    return NextResponse.json(
+      { message: "User created successfully", user },
+      { status: 201 }
+    );
   } catch (error) {
     console.error("Signup error:", error);
-
-    if (error) {
+    if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: "Invalid input", details: error.errors },
-        { status: 400 },
-        console.log(error)
-      );
-    }
-
-    if (error.code === "P2002") {
-      // Prisma unique constraint violation
-      return NextResponse.json(
-        { error: "Email already exists" },
+        { error: error.errors[0].message },
         { status: 400 }
       );
     }
-
     return NextResponse.json(
-      { error: "Failed to create user", details: error.message },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }

@@ -4,37 +4,41 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "./ui/button";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
   const router = useRouter();
+  const { data: session, status } = useSession();
 
-  const handleSignIn = async () => {
-    setError(null);
-    setLoading(true);
-    try {
-      await router.push("/api/auth/signin");
-    } catch (err) {
-      console.error("Sign-in failed:", err);
-      setError("An unexpected error occurred");
-    } finally {
-      setLoading(false);
-    }
-  };
+  console.log("Session data in Header:", session, "Status:", status);
 
   const handleSignOut = async () => {
-    setLoading(true);
     try {
       await signOut({ callbackUrl: "/" });
     } catch (err) {
       console.error("Sign-out failed:", err);
-      setError("An unexpected error occurred");
-    } finally {
-      setLoading(false);
     }
+  };
+
+  const getDashboardLink = () => {
+    if (!session?.user?.role) return null;
+    return session.user.role === "lawyer"
+      ? "/dashboard/lawyer"
+      : "/dashboard/client";
+  };
+  const getProfileLink = () => {
+    if (!session?.user?.role) return null;
+    return session.user.role === "lawyer"
+      ? "/profile/lawyer"
+      : "/profile/client";
   };
 
   return (
@@ -99,22 +103,50 @@ export default function Header() {
           </div>
 
           {/* Desktop Actions */}
-
-          <div className="flex gap-2 items-center ">
-            <Link
-              href="/login"
-              className=" py-2 bg-navy-600  rounded-lg hover:bg-navy-700 transition-colors font-medium"
-              aria-label="Sign in"
-            >
-              <Button variant="outline">Login</Button>
-            </Link>
-            <Link
-              href="/signup"
-              className=" py-2 bg-navy-600  rounded-lg hover:bg-navy-700 transition-colors font-medium"
-              aria-label="Sign up"
-            >
-              <Button variant="outline">Sign Up</Button>
-            </Link>
+          <div className="flex items-center gap-2">
+            {status === "authenticated" && session?.user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Avatar className="h-10 w-10 cursor-pointer">
+                    <AvatarImage
+                      src={session.user.image || "/placeholder-avatar.jpg"}
+                      alt={session.user.name || "User profile"}
+                    />
+                    <AvatarFallback>
+                      {session.user.name?.charAt(0)?.toUpperCase() || "U"}
+                    </AvatarFallback>
+                  </Avatar>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem asChild>
+                    <Link href={getDashboardLink() || "#"}>Dashboard</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href={getProfileLink() || "#"}>profile</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleSignOut}>
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="py-2 px-4 bg-navy-600 rounded-lg hover:bg-navy-700 transition-colors font-medium"
+                  aria-label="Sign in"
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/signup"
+                  className="py-2 px-4 bg-navy-600 rounded-lg hover:bg-navy-700 transition-colors font-medium"
+                  aria-label="Sign up"
+                >
+                  Sign Up
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -189,6 +221,55 @@ export default function Header() {
               >
                 Contact
               </Link>
+              {status === "authenticated" && session?.user ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start text-left"
+                    >
+                      <Avatar className="h-8 w-8 mr-2">
+                        <AvatarImage
+                          src={session.user.image || "/placeholder-avatar.jpg"}
+                          alt={session.user.name || "User profile"}
+                        />
+                        <AvatarFallback>
+                          {session.user.name?.charAt(0)?.toUpperCase() || "U"}
+                        </AvatarFallback>
+                      </Avatar>
+                      Profile
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="w-48">
+                    <DropdownMenuItem asChild>
+                      <Link href={getDashboardLink() || "#"}>Dashboard</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href={getProfileLink() || "#"}>Profile</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleSignOut}>
+                      Logout
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <>
+                  <Link
+                    href="/login"
+                    className="py-2 px-4 bg-navy-600 rounded-lg hover:bg-navy-700 transition-colors font-medium w-full text-center"
+                    aria-label="Sign in"
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    href="/signup"
+                    className="py-2 px-4 bg-navy-600  rounded-lg hover:bg-navy-700 transition-colors font-medium w-full text-center"
+                    aria-label="Sign up"
+                  >
+                    Sign Up
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         )}

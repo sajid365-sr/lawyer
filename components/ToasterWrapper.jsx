@@ -1,7 +1,7 @@
 "use client";
 
-import { Toaster } from "@/components/ui/sonner";
+import { Toaster } from "sonner";
 
 export default function ToasterWrapper() {
-  return <Toaster />;
+  return <Toaster richColors />;
 }

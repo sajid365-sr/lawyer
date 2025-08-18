@@ -1,12 +1,11 @@
 "use client";
 
-import { signIn } from "next-auth/react";
-import { useState } from "react";
-import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { loginSchema } from "@/lib/validations/client";
-
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { toast } from "sonner";
 import {
   Card,
   CardHeader,
@@ -24,10 +23,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { loginSchema } from "@/lib/schema/client";
+import { useState } from "react";
 
 export default function LogInPage() {
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
 
   const form = useForm({
     resolver: zodResolver(loginSchema),
@@ -37,17 +38,32 @@ export default function LogInPage() {
     },
   });
 
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    const result = await signIn("credentials", {
-      redirect: false,
-      email,
-      password,
-    });
-    if (result.error) {
-      toast("This is a toast");
-    } else {
-      window.location.href = "/profile/client";
+  const onSubmit = async (data) => {
+    setIsLoading(true);
+    try {
+      console.log("Attempting sign-in with:", data);
+      const result = await signIn("credentials", {
+        redirect: false,
+        email: data.email,
+        password: data.password,
+      });
+
+      console.log("Sign-in result:", result);
+      if (result?.error) {
+        toast.error("Sign-in Error", {
+          description: result.error,
+        });
+      } else {
+        toast.success("Signed in successfully");
+        router.push("/profile/client");
+      }
+    } catch (error) {
+      console.error("Sign-in error:", error);
+      toast.error("An unexpected error occurred", {
+        description: error.message,
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -68,14 +84,7 @@ export default function LogInPage() {
             </Link>
           </CardDescription>
         </CardHeader>
-
         <CardContent>
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md mb-4">
-              {error}
-            </div>
-          )}
-
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
@@ -95,7 +104,6 @@ export default function LogInPage() {
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="password"
@@ -113,7 +121,6 @@ export default function LogInPage() {
                   </FormItem>
                 )}
               />
-
               <div className="flex justify-end text-sm">
                 <Link
                   href="/auth/forgot-password"
@@ -122,7 +129,6 @@ export default function LogInPage() {
                   Forgot your password?
                 </Link>
               </div>
-
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? "Signing in..." : "Sign in"}
               </Button>

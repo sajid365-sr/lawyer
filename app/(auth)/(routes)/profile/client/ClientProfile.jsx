@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { clientProfileSchema } from "@/lib/validations/client";
+import { clientProfileSchema } from "@/lib/schema/client";
 
 export default function ClientProfile({ initialProfile }) {
   const form = useForm({

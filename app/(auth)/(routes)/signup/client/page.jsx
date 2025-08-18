@@ -1,8 +1,10 @@
 "use client";
 
-import * as React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,10 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { toast } from "@/components/ui/sonner";
-import { useRouter } from "next/navigation";
-import { signIn } from "@/lib/auth";
-import { clientSignupSchema } from "@/lib/validations/client";
+import { clientSignupSchema } from "@/lib/schema/client";
 
 export default function ClientSignup() {
   const router = useRouter();
@@ -27,7 +26,6 @@ export default function ClientSignup() {
       name: "",
       email: "",
       password: "",
-      confirmPassword: "",
     },
   });
 
@@ -41,30 +39,29 @@ export default function ClientSignup() {
 
       const result = await response.json();
 
-      console.log(response, result);
-
       if (!response.ok) {
         throw new Error(result.error || "Failed to create user");
       }
 
-      toast("This is a toast");
+      toast.success("Account created successfully");
 
-      // Attempt to sign in the user
       const signInResult = await signIn("credentials", {
         redirect: false,
         email: data.email,
         password: data.password,
       });
 
-      console.log(signInResult);
-
       if (signInResult?.error) {
-        toast("This is a toast");
+        toast.error("Sign-in Error", {
+          description: signInResult.error,
+        });
       } else {
         router.push("/profile/client");
       }
     } catch (error) {
-      toast("This is a toast");
+      toast.error("Error", {
+        description: error.message || "An error occurred during signup",
+      });
     }
   };
 

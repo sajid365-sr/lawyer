@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import { lawyerSignupSchema } from "@/lib/validations/lawyer";
+import { lawyerSignupSchema } from "@/lib/schema/lawyer";
 
 export async function POST(request) {
   try {

@@ -16,10 +16,10 @@ export default async function RootLayout({ children }) {
 
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={inter.className} suppressHydrationWarning={true}>
         <SessionProvider session={session}>
-          <ToasterWrapper />
           {children}
+          <ToasterWrapper />
         </SessionProvider>
       </body>
     </html>
