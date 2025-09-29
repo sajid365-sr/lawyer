@@ -18,6 +18,8 @@ export default async function ClientProfilePage() {
     where: { id: session.user.id },
   });
 
+  console.log(profile);
+
   if (!profile) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">

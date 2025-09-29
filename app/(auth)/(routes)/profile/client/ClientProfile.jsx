@@ -91,7 +91,7 @@ export default function ClientProfile({ initialProfile }) {
                           <div className="flex flex-col items-center">
                             <div className="w-32 h-32 rounded-full overflow-hidden mb-4">
                               <img
-                                src={imagePreview || "/placeholder-avatar.jpg"}
+                                src={imagePreview || "/user.jpg"}
                                 alt="Profile"
                                 className="w-full h-full object-cover"
                               />
